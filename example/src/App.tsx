@@ -8,14 +8,22 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setText('Ipsum');
-    }, 4000);
+    }, 2000);
     setTimeout(() => {
       setText('dolor sit amet');
-    }, 7000);
+    }, 4000);
   }, []);
   return (
     <div className="App">
-      <TextHackedEffectComponent defaultText={text} />
+      <div>
+        <TextHackedEffectComponent defaultText={'Hover me'} startOnHover />
+      </div>
+      <div>
+        <TextHackedEffectComponent defaultText={'Start after 2s'} startAfterTimer={2000} />
+      </div>
+      <div>
+        <TextHackedEffectComponent defaultText={text} autoStart />
+      </div>
     </div>
   );
 }
