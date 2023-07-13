@@ -1,0 +1,14 @@
+.App {
+ background-color: black;
+ color: white;
+ height: 100vh;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+
+span{
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+}
