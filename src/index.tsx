@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-let iteration = 0;
+let TextHackedEffectComponentIteration = 0;
 type TextHackedEffectComponentProps = {
   defaultText: string;
   timeOut?: number;
@@ -9,16 +9,20 @@ const TextHackedEffectComponent: React.FC<TextHackedEffectComponentProps> = ({ d
   const letters = useMemo(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', []);
   const [text, setText] = useState<string>(defaultText);
   useEffect(() => {
-    iteration += 1 / 3;
+    TextHackedEffectComponentIteration += 1 / 3;
+    if (TextHackedEffectComponentIteration === text.length) {
+      TextHackedEffectComponentIteration = 0;
+    }
     setTimeout(() => {
-      if (iteration >= text.length - 1) {
+      if (TextHackedEffectComponentIteration >= text.length - 1) {
+        TextHackedEffectComponentIteration = text.length;
         setText(defaultText);
         return;
       }
       const futurText = text
         .split('')
         .map((_letter, index) => {
-          if (index < iteration) {
+          if (index < TextHackedEffectComponentIteration) {
             return text[index];
           }
 
@@ -27,7 +31,12 @@ const TextHackedEffectComponent: React.FC<TextHackedEffectComponentProps> = ({ d
         .join('');
       setText(futurText);
     }, timeOut);
-  }, [text, timeOut]);
+  }, [text]);
+
+  useEffect(() => {
+    TextHackedEffectComponentIteration = 0;
+    setText(defaultText);
+  }, [defaultText]);
 
   return <span style={{ textTransform: 'uppercase' }}>{text}</span>;
 };
