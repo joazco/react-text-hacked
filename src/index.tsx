@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-// let TextHackedEffectComponentIteration = 0;
+export const defaultAlphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 type TextHackedEffectComponentProps = {
   defaultText: string;
   timeOut?: number;
   autoStart?: boolean;
   startOnHover?: boolean;
   startAfterTimer?: number;
+  alphabet?: string;
 };
 const TextHackedEffectComponent: React.FC<TextHackedEffectComponentProps> = ({
   defaultText,
@@ -14,14 +15,15 @@ const TextHackedEffectComponent: React.FC<TextHackedEffectComponentProps> = ({
   startOnHover = false,
   autoStart = false,
   startAfterTimer,
+  alphabet = defaultAlphabet,
 }) => {
-  const letters = useMemo(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', []);
-  const [_, setTextHackedEffectComponentIteration] = useState<number>(0);
+  const [textHackedEffectComponentIteration, setTextHackedEffectComponentIteration] = useState<number>();
   const [text, setText] = useState<string>('');
   const [start, setStart] = useState<boolean>(autoStart);
 
+  const textLength = useMemo(() => text.length - 1, [text]);
+
   const generateRandomText = useCallback((size: number) => {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let randomText = '';
 
     for (let i = 0; i < size; i++) {
@@ -34,33 +36,36 @@ const TextHackedEffectComponent: React.FC<TextHackedEffectComponentProps> = ({
 
   useEffect(() => {
     if (!start) return;
-    setTextHackedEffectComponentIteration((TextHackedEffectComponentIteration) => {
-      TextHackedEffectComponentIteration += 1 / 3;
-
-      setTimeout(() => {
-        if (TextHackedEffectComponentIteration >= text.length - 1) {
-          TextHackedEffectComponentIteration = text.length;
-          setText(defaultText);
-          return;
-        }
-        const futurText = text
-          .split('')
-          .map((_letter, index) => {
-            if (index < TextHackedEffectComponentIteration) {
-              return text[index];
-            }
-
-            return letters[Math.floor(Math.random() * 26)];
-          })
-          .join('');
-        setText(futurText);
-      }, timeOut);
-      return TextHackedEffectComponentIteration;
-    });
-  }, [text, start]);
+    setTextHackedEffectComponentIteration(1 / 3);
+  }, [start]);
 
   useEffect(() => {
-    setTextHackedEffectComponentIteration(0);
+    if (textHackedEffectComponentIteration === undefined) {
+      return;
+    }
+    setTimeout(() => {
+      if (textHackedEffectComponentIteration >= textLength) {
+        setTextHackedEffectComponentIteration(textLength);
+        setText(defaultText);
+        return;
+      }
+      const futurText = text
+        .split('')
+        .map((_letter, index) => {
+          if (index < textHackedEffectComponentIteration) {
+            return defaultText[index];
+          }
+
+          return alphabet[Math.floor(Math.random() * alphabet.length)];
+        })
+        .join('');
+      setText(futurText);
+      setTextHackedEffectComponentIteration(textHackedEffectComponentIteration + 1 / 3);
+    }, timeOut);
+  }, [textHackedEffectComponentIteration, textLength]);
+
+  useEffect(() => {
+    setTextHackedEffectComponentIteration(1 / 3);
     setText(generateRandomText(defaultText.length));
   }, [defaultText]);
 
@@ -68,7 +73,7 @@ const TextHackedEffectComponent: React.FC<TextHackedEffectComponentProps> = ({
     if (!autoStart && !startOnHover && startAfterTimer) {
       setTimeout(() => setStart(true), startAfterTimer);
     }
-  }, [autoStart, startOnHover, startAfterTimer]);
+  }, []);
 
   if (!start) {
     return (

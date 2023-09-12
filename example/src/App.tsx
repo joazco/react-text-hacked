@@ -8,11 +8,12 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setText('Ipsum');
-    }, 2000);
+    }, 3000);
     setTimeout(() => {
       setText('dolor sit amet');
-    }, 4000);
+    }, 5000);
   }, []);
+
   return (
     <div className="App">
       <div>
